@@ -13,6 +13,16 @@ class DB():
         # 创建游标
         self.cursor = self.conn.cursor()
 
+    def create_table(self):
+        sql = '''CREATE TABLE IF NOT EXISTS user (
+    id       INTEGER       PRIMARY KEY AUTOINCREMENT,
+    username VARCHAR (255) UNIQUE,
+    password VARCHAR (255) 
+); '''
+        self.cursor.execute(sql)
+        self.conn.commit()
+        return True
+
     def select_username(self, username):
         sql = 'select username from user where username=?;'
         self.cursor.execute(sql, (username,))
@@ -56,6 +66,13 @@ class Application(tk.Tk):
         self.geometry('650x450')
         self.resizable(width=False, height=False)  # 禁止拉伸
         self.createWidgets()
+        self.init_table()
+
+    def init_table(self):
+        db = DB()
+        db.create_conn()
+        db.create_table()
+        db.close()
 
     def createWidgets(self):
         '''界面'''
@@ -76,7 +93,7 @@ class Application(tk.Tk):
         self.text_display.place(x=200, y=210, width=350, height=220)
 
         self.del_btn = tk.Button(master=self, text='Delete', command=self.delete)
-        self.del_btn.place(x=100, y=280, width=80, height=25)
+        # self.del_btn.place(x=100, y=280, width=80, height=25)
 
     def check(self, username, password):
         if not username or not password: return
